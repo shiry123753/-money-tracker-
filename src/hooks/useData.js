@@ -32,3 +32,18 @@ export function useCategories(userId) {
   }, [userId])
   return cats
 }
+
+// 分類 + 自訂圖示/顏色對應(money_users.categoryMeta)
+export function useCategoryMeta(userId) {
+  const [state, setState] = useState({ categories: DEFAULT_CATEGORIES, categoryMeta: {} })
+  useEffect(() => {
+    if (!userId) return undefined
+    return subscribeUser(userId, (u) => {
+      if (u) setState({
+        categories: u.categories?.length ? u.categories : DEFAULT_CATEGORIES,
+        categoryMeta: u.categoryMeta || {},
+      })
+    })
+  }, [userId])
+  return state
+}

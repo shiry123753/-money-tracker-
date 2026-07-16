@@ -1,8 +1,7 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
 const TABS = [
-  { to: '/', en: 'Add', zh: '記帳' },
-  { to: '/list', en: 'List', zh: '明細' },
+  { to: '/', en: 'Home', zh: '首頁' },
   { to: '/debts', en: 'Debt', zh: '借貸' },
   { to: '/dashboard', en: 'Chart', zh: '分析' },
   { to: '/more', en: 'More', zh: '更多' },

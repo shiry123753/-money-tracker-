@@ -54,3 +54,8 @@ export function subscribeUser(userId, cb) {
 export async function addCategory(userId, name) {
   await updateDoc(doc(db, COL.users, userId), { categories: arrayUnion(name) })
 }
+
+// 儲存分類的圖示與顏色(money_users.categoryMeta.<分類名>)
+export async function saveCategoryMeta(userId, name, meta) {
+  await updateDoc(doc(db, COL.users, userId), { [`categoryMeta.${name}`]: meta })
+}

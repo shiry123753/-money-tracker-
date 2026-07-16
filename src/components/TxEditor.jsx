@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import { updateTransaction, deleteTransaction } from '../data/transactions'
 import { TX_SHARE_LABEL } from '../data/constants'
+import CategoryGrid from './CategoryGrid'
 
 // 編輯既有交易的底部面板（點清單列開啟）
-export default function TxEditor({ tx, categories, onClose }) {
+export default function TxEditor({ tx, categories, meta, userId, onClose }) {
   const [amount, setAmount] = useState(String(tx.amount))
   const [note, setNote] = useState(tx.note || '')
   const [date, setDate] = useState(tx.date)
@@ -65,9 +66,9 @@ export default function TxEditor({ tx, categories, onClose }) {
         ) : (
           <div className="field">
             <label>分類 Category</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-            </select>
+            <CategoryGrid
+              categories={tx.type === 'income' ? ['收入', ...categories] : categories}
+              meta={meta} value={category} onChange={setCategory} userId={userId} />
           </div>
         )}
 

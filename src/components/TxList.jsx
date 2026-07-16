@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
 import { fmtMoney, dateLabel, weekdayLabel } from '../data/format'
+import CategoryIcon from './CategoryIcon'
 
 function rowMeta(tx) {
   if (tx.type === 'debt') {
@@ -17,7 +18,7 @@ function rowMeta(tx) {
 }
 
 // 依日期分組的交易清單;onSelect 省略時為唯讀
-export default function TxList({ list, onSelect }) {
+export default function TxList({ list, meta, onSelect, showDateHead = true }) {
   if (!list.length) {
     return <div className="empty"><span className="en">EMPTY</span>沒有符合的紀錄</div>
   }
@@ -25,8 +26,8 @@ export default function TxList({ list, onSelect }) {
   return (
     <div>
       {list.map((tx) => {
-        const meta = rowMeta(tx)
-        const head = tx.date !== lastDate && (
+        const m = rowMeta(tx)
+        const head = showDateHead && tx.date !== lastDate && (
           <div className="tx-date-head" key={`h-${tx.date}`}>
             {dateLabel(tx.date)}
             <span className="wd">週{weekdayLabel(tx.date)}</span>
@@ -38,13 +39,16 @@ export default function TxList({ list, onSelect }) {
             {head}
             <div className="tx-row" onClick={onSelect ? () => onSelect(tx) : undefined}
               style={onSelect ? undefined : { cursor: 'default' }}>
-              <span className="cat">{meta.cat}</span>
+              <CategoryIcon name={m.cat} meta={meta} size={34} />
               <span className="note">
-                {tx.note || '—'}
-                {meta.sub && <span className="sub">{meta.sub}</span>}
-                {tx.shareLevel === 'hidden' && <span className="sub">🔒 不分享</span>}
+                {tx.note || m.cat}
+                <span className="sub">
+                  {m.cat}
+                  {m.sub && ` · ${m.sub}`}
+                  {tx.shareLevel === 'hidden' && ' · 🔒 不分享'}
+                </span>
               </span>
-              <span className={`amt ${meta.amtClass}`}>{meta.sign}{fmtMoney(tx.amount)}</span>
+              <span className={`amt ${m.amtClass}`}>{m.sign}{fmtMoney(tx.amount)}</span>
             </div>
           </Fragment>
         )

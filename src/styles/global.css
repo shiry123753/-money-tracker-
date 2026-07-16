@@ -237,3 +237,111 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
 
 .muted { color: var(--mut); font-size: 12.5px; }
 .footer-sig { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; opacity: .8; }
+
+/* ==========================================================================
+   天天記帳式改版:月曆首頁、FAB、分類圖示、數字鍵盤
+   ========================================================================== */
+
+/* ---- 首頁頂部大字 ---- */
+.month-hero { text-align: center; margin: 2px 0 12px; }
+.month-hero .hero-amt {
+  font-family: var(--serif); font-weight: 600; font-size: 44px; line-height: 1.15;
+  letter-spacing: 1px;
+}
+.month-hero .hero-sub { color: var(--mut); font-size: 12.5px; }
+.month-nav button.view-on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.month-nav button svg { vertical-align: -2px; }
+
+/* ---- 月曆 ---- */
+.calendar { background: var(--panel); border: 1px solid var(--line); border-radius: 4px; padding: 10px 8px 8px; }
+.cal-week { display: grid; grid-template-columns: repeat(7, 1fr); margin-bottom: 4px; }
+.cal-wd { text-align: center; font-size: 10.5px; letter-spacing: 1px; color: var(--mut); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-cell {
+  min-height: 46px; border: 0; background: transparent; border-radius: 4px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 4px 0 3px; gap: 1px; color: var(--ink);
+}
+.cal-cell.empty { cursor: default; }
+.cal-cell.on { background: var(--ink); color: var(--bg); }
+.cal-cell .cal-day { font-family: var(--serif); font-size: 14px; line-height: 1.2; }
+.cal-cell .cal-amt { font-size: 8.5px; color: var(--bad); line-height: 1.1; }
+.cal-cell.on .cal-amt { color: #D9B8B2; }
+.cal-cell .cal-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--acc); }
+.cal-cell.on .cal-dot { background: var(--bg); }
+
+/* ---- FAB ---- */
+.fab {
+  position: fixed; right: max(18px, calc(50vw - 262px));
+  bottom: calc(78px + env(safe-area-inset-bottom));
+  width: 56px; height: 56px; border-radius: 50%; z-index: 30;
+  background: var(--ink); color: #F4EFE6; border: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 14px rgba(26, 23, 20, .3);
+}
+.fab:active { transform: scale(.94); }
+
+/* ---- 分類圖示 ---- */
+.cat-icon {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  border-radius: 50%; color: #F4EFE6;
+}
+.cat-icon.add { width: 38px; height: 38px; background: transparent; color: var(--acc); border: 1.5px dashed var(--acc); }
+.cat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px 2px; margin-bottom: 10px; }
+.cat-cell {
+  border: 0; background: transparent; cursor: pointer; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 0 4px;
+}
+.cat-cell.on { background: var(--panel2); }
+.cat-cell.on .cat-icon { outline: 2px solid var(--ink); outline-offset: 1.5px; }
+.cat-cell .cat-name { font-size: 11px; color: var(--ink); line-height: 1.2; }
+.auto-tag {
+  font-style: normal; font-size: 9px; color: var(--bg); background: var(--acc);
+  border-radius: 2px; padding: 0 3px; margin-left: 3px; vertical-align: 1px;
+}
+
+/* ---- 自訂分類:圖示庫 + 色票 ---- */
+.cat-creator { border-top: 1px dashed var(--line); padding-top: 12px; margin-bottom: 10px; }
+.icon-lib { display: grid; grid-template-columns: repeat(9, 1fr); gap: 4px; }
+.icon-pick {
+  aspect-ratio: 1; border: 1px solid var(--line); border-radius: 4px; background: #fff;
+  color: var(--acc); cursor: pointer; display: flex; align-items: center; justify-content: center;
+}
+.icon-pick.on { background: var(--ink); color: #F4EFE6; border-color: var(--ink); }
+.color-row { display: flex; flex-wrap: wrap; gap: 6px; }
+.color-pick {
+  width: 26px; height: 26px; border-radius: 50%; border: 0; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.color-pick.on { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* ---- 快速記帳面板 ---- */
+.add-sheet { padding-top: 14px; }
+.amount-display {
+  display: flex; align-items: baseline; justify-content: flex-end; gap: 6px;
+  border-bottom: 1.5px solid var(--ink); padding: 2px 6px 6px; margin-bottom: 12px;
+}
+.amount-display .cur { font-family: var(--serif); font-size: 18px; color: var(--mut); }
+.amount-display .num {
+  font-family: var(--serif); font-weight: 600; font-size: 40px; line-height: 1;
+  letter-spacing: 1px; min-height: 40px;
+}
+
+/* ---- 數字鍵盤 ---- */
+.keypad { display: flex; gap: 6px; }
+.keypad-keys { flex: 3; display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.key {
+  border: 1px solid var(--line); background: var(--panel); border-radius: 5px;
+  font-family: var(--serif); font-size: 21px; padding: 11px 0; cursor: pointer; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.key:active { background: var(--panel2); }
+.key.done {
+  flex: 1; background: var(--ink); border-color: var(--ink); color: #F4EFE6;
+  font-family: var(--sans); font-size: 16px; letter-spacing: 4px;
+  writing-mode: vertical-rl;
+}
+.key.done:disabled { opacity: .35; cursor: default; }
+
+/* ---- 排行 ---- */
+.legend-row .rank { width: 16px; text-align: center; color: var(--mut); font-size: 13px; }
