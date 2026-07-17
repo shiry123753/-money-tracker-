@@ -44,6 +44,7 @@ export default function TxList({ list, meta, onSelect, showDateHead = true }) {
                 {tx.note || m.cat}
                 <span className="sub">
                   {m.cat}
+                  {tx.account && ` · ${tx.account}`}
                   {m.sub && ` · ${m.sub}`}
                   {tx.shareLevel === 'hidden' && ' · 🔒 不分享'}
                 </span>

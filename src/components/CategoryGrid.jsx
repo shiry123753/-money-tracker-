@@ -2,10 +2,11 @@ import { useState } from 'react'
 import { Plus, Check } from 'lucide-react'
 import CategoryIcon from './CategoryIcon'
 import { ICONS, COLORS } from '../data/categoryMeta'
-import { addCategory, saveCategoryMeta } from '../data/users'
+import { addCategory, addIncomeCategory, saveCategoryMeta } from '../data/users'
 
 // 分類圖示網格:一次顯示全部分類,點選切換;可新增自訂分類(挑圖示+顏色)
-export default function CategoryGrid({ categories, meta, value, onChange, userId, autoTag }) {
+// kind='income' 時新增的分類存到收入分類清單
+export default function CategoryGrid({ categories, meta, value, onChange, userId, autoTag, kind = 'expense' }) {
   const [adding, setAdding] = useState(false)
   const [name, setName] = useState('')
   const [icon, setIcon] = useState('cart')
@@ -16,7 +17,9 @@ export default function CategoryGrid({ categories, meta, value, onChange, userId
     const n = name.trim()
     if (!n || busy) return
     setBusy(true)
-    if (!categories.includes(n)) await addCategory(userId, n)
+    if (!categories.includes(n)) {
+      await (kind === 'income' ? addIncomeCategory(userId, n) : addCategory(userId, n))
+    }
     await saveCategoryMeta(userId, n, { icon, color })
     onChange(n)
     setAdding(false)

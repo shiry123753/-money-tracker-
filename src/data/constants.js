@@ -1,5 +1,11 @@
 export const DEFAULT_CATEGORIES = ['早餐', '午餐', '晚餐', '交通', '加油', '其他']
 
+// 收入專用分類(與支出分類分開)
+export const INCOME_CATEGORIES = ['薪資', '獎金', '爸媽的愛']
+
+// 帳戶選項
+export const ACCOUNTS = ['現金', '銀行', '信用卡']
+
 // 新帳號的起手式規則,之後可在「分類規則」頁自行增刪
 export const SEED_RULES = [
   { keyword: '中油', category: '加油' },

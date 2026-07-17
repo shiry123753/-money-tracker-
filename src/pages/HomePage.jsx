@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react'
-import { CalendarDays, List, Plus } from 'lucide-react'
+import { useMemo, useRef, useState } from 'react'
+import { CalendarDays, List, Plus, ChevronDown } from 'lucide-react'
 import { useSession } from '../hooks/useSession'
 import { useTransactions, useRules, useCategoryMeta } from '../hooks/useData'
 import { addRule } from '../data/rules'
 import { sumIncome, sumExpense } from '../data/transactions'
 import { todayStr, monthKey, thisMonthKey, shiftMonth, monthLabel, fmtMoney, dateLabel, weekdayLabel } from '../data/format'
 import CalendarView from '../components/CalendarView'
+import MonthPicker from '../components/MonthPicker'
 import AddSheet from '../components/AddSheet'
 import TxList from '../components/TxList'
 import TxEditor from '../components/TxEditor'
@@ -14,15 +15,17 @@ export default function HomePage() {
   const session = useSession()
   const txs = useTransactions(session.userId)
   const rules = useRules(session.userId)
-  const { categories, categoryMeta } = useCategoryMeta(session.userId)
+  const { categories, incomeCategories, categoryMeta } = useCategoryMeta(session.userId)
 
   const [month, setMonth] = useState(thisMonthKey())
   const [view, setView] = useState('calendar') // 'calendar' | 'list'
   const [selectedDay, setSelectedDay] = useState(todayStr())
   const [adding, setAdding] = useState(false)
   const [editing, setEditing] = useState(null)
+  const [picking, setPicking] = useState(false)
   const [toast, setToast] = useState('')
   const [rulePrompt, setRulePrompt] = useState(null)
+  const touchRef = useRef(null)
 
   const monthTxs = useMemo(
     () => (txs || []).filter((t) => monthKey(t.date) === month), [txs, month])
@@ -41,10 +44,26 @@ export default function HomePage() {
   const dayTxs = useMemo(
     () => monthTxs.filter((t) => t.date === selectedDay), [monthTxs, selectedDay])
 
-  function changeMonth(delta) {
-    const next = shiftMonth(month, delta)
+  function applyMonth(next) {
     setMonth(next)
     setSelectedDay(next === thisMonthKey() ? todayStr() : `${next}-01`)
+  }
+
+  function changeMonth(delta) {
+    applyMonth(shiftMonth(month, delta))
+  }
+
+  // 日曆左右滑動換月:往右滑=上一月,往左滑=下一月
+  function onTouchStart(e) {
+    touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
+  }
+  function onTouchEnd(e) {
+    const t = touchRef.current
+    touchRef.current = null
+    if (!t) return
+    const dx = e.changedTouches[0].clientX - t.x
+    const dy = e.changedTouches[0].clientY - t.y
+    if (Math.abs(dx) > 50 && Math.abs(dy) < 60) changeMonth(dx > 0 ? -1 : 1)
   }
 
   function handleSaved({ toast: t, rulePrompt: rp }) {
@@ -63,7 +82,9 @@ export default function HomePage() {
     <div>
       <div className="month-nav">
         <button onClick={() => changeMonth(-1)}>‹</button>
-        <span className="m">{monthLabel(month)}</span>
+        <button className="m month-title" onClick={() => setPicking(true)}>
+          {monthLabel(month)}<ChevronDown size={15} />
+        </button>
         <span style={{ display: 'flex', gap: 6 }}>
           <button onClick={() => changeMonth(1)}>›</button>
           <button className={view === 'calendar' ? 'view-on' : ''} title="日曆檢視"
@@ -94,8 +115,10 @@ export default function HomePage() {
         <div className="empty">載入中…</div>
       ) : view === 'calendar' ? (
         <>
-          <CalendarView monthKey={month} dayStats={dayStats}
-            selected={selectedDay} onSelect={setSelectedDay} />
+          <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
+            <CalendarView monthKey={month} dayStats={dayStats}
+              selected={selectedDay} onSelect={setSelectedDay} />
+          </div>
           <div className="tx-date-head">
             {dateLabel(selectedDay)}
             <span className="wd">週{weekdayLabel(selectedDay)}</span>
@@ -112,11 +135,16 @@ export default function HomePage() {
         <Plus size={26} />
       </button>
 
+      {picking && (
+        <MonthPicker value={month} onChange={applyMonth} onClose={() => setPicking(false)} />
+      )}
+
       {adding && (
         <AddSheet
           userId={session.userId}
           rules={rules}
           categories={categories}
+          incomeCategories={incomeCategories}
           meta={categoryMeta}
           defaultDate={view === 'calendar' ? selectedDay : todayStr()}
           onSaved={handleSaved}
@@ -125,8 +153,8 @@ export default function HomePage() {
       )}
 
       {editing && (
-        <TxEditor tx={editing} categories={categories} meta={categoryMeta}
-          userId={session.userId} onClose={() => setEditing(null)} />
+        <TxEditor tx={editing} categories={categories} incomeCategories={incomeCategories}
+          meta={categoryMeta} userId={session.userId} onClose={() => setEditing(null)} />
       )}
     </div>
   )

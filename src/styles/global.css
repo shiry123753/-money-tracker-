@@ -342,6 +342,48 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
   writing-mode: vertical-rl;
 }
 .key.done:disabled { opacity: .35; cursor: default; }
+.key.done.eq { writing-mode: horizontal-tb; font-family: var(--serif); font-size: 26px; letter-spacing: 0; }
 
 /* ---- 排行 ---- */
 .legend-row .rank { width: 16px; text-align: center; color: var(--mut); font-size: 13px; }
+
+/* ---- 計算機鍵盤(四欄+運算子) ---- */
+.keypad-keys.four { grid-template-columns: repeat(4, 1fr); }
+.key.op { background: var(--panel2); font-size: 19px; color: var(--acc); }
+.amount-display { position: relative; }
+.amount-display .eq-hint {
+  position: absolute; left: 6px; bottom: 8px;
+  font-family: var(--serif); font-size: 15px; color: var(--mut);
+}
+
+/* ---- 帳戶選擇 ---- */
+.acct-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.acct-pill {
+  display: inline-flex; align-items: center; gap: 5px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--panel); color: var(--mut);
+  border-radius: 999px; padding: 5px 13px; font-size: 12.5px;
+}
+.acct-pill.on { background: var(--ink); border-color: var(--ink); color: #F4EFE6; }
+
+/* ---- 月份快速選擇 ---- */
+.month-nav .month-title {
+  width: auto; height: auto; border: 0; background: transparent; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 3px; padding: 2px 6px;
+}
+.month-nav .month-title svg { color: var(--mut); }
+.year-scroll {
+  display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+}
+.year-scroll::-webkit-scrollbar { display: none; }
+.year-chip {
+  flex: none; border: 1px solid var(--line); background: var(--panel); cursor: pointer;
+  border-radius: 999px; padding: 6px 16px; font-family: var(--serif); font-size: 15px; color: var(--mut);
+}
+.year-chip.on { background: var(--ink); border-color: var(--ink); color: #F4EFE6; }
+.mp-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.mp-cell {
+  border: 1px solid var(--line); background: var(--panel); border-radius: 4px; cursor: pointer;
+  padding: 13px 0; font-family: var(--serif); font-size: 16px; color: var(--ink);
+}
+.mp-cell.on { background: var(--ink); border-color: var(--ink); color: #F4EFE6; }

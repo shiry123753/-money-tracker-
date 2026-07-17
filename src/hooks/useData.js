@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { subscribeTransactions } from '../data/transactions'
 import { subscribeRules } from '../data/rules'
 import { subscribeUser } from '../data/users'
-import { DEFAULT_CATEGORIES } from '../data/constants'
+import { DEFAULT_CATEGORIES, INCOME_CATEGORIES } from '../data/constants'
 
 export function useTransactions(userId) {
   const [list, setList] = useState(null) // null = 載入中
@@ -35,12 +35,17 @@ export function useCategories(userId) {
 
 // 分類 + 自訂圖示/顏色對應(money_users.categoryMeta)
 export function useCategoryMeta(userId) {
-  const [state, setState] = useState({ categories: DEFAULT_CATEGORIES, categoryMeta: {} })
+  const [state, setState] = useState({
+    categories: DEFAULT_CATEGORIES,
+    incomeCategories: INCOME_CATEGORIES,
+    categoryMeta: {},
+  })
   useEffect(() => {
     if (!userId) return undefined
     return subscribeUser(userId, (u) => {
       if (u) setState({
         categories: u.categories?.length ? u.categories : DEFAULT_CATEGORIES,
+        incomeCategories: [...INCOME_CATEGORIES, ...(u.incomeCategories || [])],
         categoryMeta: u.categoryMeta || {},
       })
     })

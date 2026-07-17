@@ -7,7 +7,11 @@ import {
   Smartphone, Wifi, Zap, Droplets, Car, Bike, Plane, Film, Music,
   BookOpen, GraduationCap, Dumbbell, PawPrint, Baby, Scissors,
   CreditCard, PiggyBank, Wallet, TrendingUp, Briefcase, CakeSlice,
+  Banknote, Landmark,
 } from 'lucide-react'
+
+// 帳戶圖示(現金/銀行/信用卡)
+export const ACCOUNT_ICONS = { 現金: Banknote, 銀行: Landmark, 信用卡: CreditCard }
 
 // icon 庫(自訂分類可挑選);key 存進 Firestore,元件在這裡對回來
 export const ICONS = {
@@ -36,6 +40,9 @@ const DEFAULT_META = {
   其他: { icon: 'package', color: '#C2B7A4' },
   借貸: { icon: 'handcoins', color: '#B0825A' },
   收入: { icon: 'wallet', color: '#6E7257' },
+  薪資: { icon: 'work', color: '#6E7257' },
+  獎金: { icon: 'gift', color: '#B0825A' },
+  爸媽的愛: { icon: 'heart', color: '#A98C76' },
 }
 
 function hash(str) {

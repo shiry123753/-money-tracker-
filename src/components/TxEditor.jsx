@@ -1,14 +1,16 @@
 import { useState } from 'react'
 import { updateTransaction, deleteTransaction } from '../data/transactions'
-import { TX_SHARE_LABEL } from '../data/constants'
+import { TX_SHARE_LABEL, ACCOUNTS } from '../data/constants'
+import { ACCOUNT_ICONS } from '../data/categoryMeta'
 import CategoryGrid from './CategoryGrid'
 
 // 編輯既有交易的底部面板（點清單列開啟）
-export default function TxEditor({ tx, categories, meta, userId, onClose }) {
+export default function TxEditor({ tx, categories, incomeCategories, meta, userId, onClose }) {
   const [amount, setAmount] = useState(String(tx.amount))
   const [note, setNote] = useState(tx.note || '')
   const [date, setDate] = useState(tx.date)
   const [category, setCategory] = useState(tx.category)
+  const [account, setAccount] = useState(tx.account || ACCOUNTS[0])
   const [shareLevel, setShareLevel] = useState(tx.shareLevel || 'all')
   const [counterparty, setCounterparty] = useState(tx.debtInfo?.counterparty || '')
   const [direction, setDirection] = useState(tx.debtInfo?.direction || 'iOwe')
@@ -19,7 +21,7 @@ export default function TxEditor({ tx, categories, meta, userId, onClose }) {
 
   async function save() {
     setBusy(true)
-    const patch = { amount: Number(amount), note: note.trim(), date, shareLevel }
+    const patch = { amount: Number(amount), note: note.trim(), date, account, shareLevel }
     if (isDebt) {
       patch.debtInfo = { ...tx.debtInfo, counterparty: counterparty.trim(), direction }
     } else {
@@ -67,10 +69,29 @@ export default function TxEditor({ tx, categories, meta, userId, onClose }) {
           <div className="field">
             <label>分類 Category</label>
             <CategoryGrid
-              categories={tx.type === 'income' ? ['收入', ...categories] : categories}
+              categories={tx.type === 'income'
+                ? [...new Set([...(incomeCategories || []), category])]
+                : categories}
+              kind={tx.type === 'income' ? 'income' : 'expense'}
               meta={meta} value={category} onChange={setCategory} userId={userId} />
           </div>
         )}
+
+        <div className="field">
+          <label>帳戶 Account</label>
+          <div className="acct-row">
+            {ACCOUNTS.map((a) => {
+              const Icon = ACCOUNT_ICONS[a]
+              return (
+                <button key={a} type="button"
+                  className={`acct-pill${account === a ? ' on' : ''}`}
+                  onClick={() => setAccount(a)}>
+                  <Icon size={14} />{a}
+                </button>
+              )
+            })}
+          </div>
+        </div>
 
         <div className="row2">
           <div className="field">
