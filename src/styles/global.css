@@ -387,3 +387,42 @@ input:focus, select:focus, textarea:focus { outline: none; border-color: var(--a
   padding: 13px 0; font-family: var(--serif); font-size: 16px; color: var(--ink);
 }
 .mp-cell.on { background: var(--ink); border-color: var(--ink); color: #F4EFE6; }
+
+/* ---- 月曆滑動輪播 ---- */
+.cal-carousel {
+  overflow: hidden;
+  touch-action: pan-y; /* 垂直捲動交給瀏覽器,水平拖曳自己接 */
+}
+.cal-track {
+  display: flex; width: 300%;
+  transform: translate3d(-33.3333%, 0, 0);
+  will-change: transform;
+}
+.cal-pane { width: 33.3333%; flex: none; }
+
+/* ---- iOS 風格滾輪選單 ---- */
+.wheel-wrap { position: relative; display: flex; gap: 10px; }
+.wheel {
+  height: 200px; overflow-y: auto; flex: 1;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none; -webkit-overflow-scrolling: touch;
+}
+.wheel::-webkit-scrollbar { display: none; }
+.wheel-pad { height: 80px; } /* (200 − 40) / 2,讓首尾項能停在中間 */
+.wheel-item {
+  height: 40px; display: flex; align-items: center; justify-content: center;
+  scroll-snap-align: center; cursor: pointer;
+  font-family: var(--serif); font-size: 16px; color: var(--mut);
+  transition: color .15s, font-size .15s;
+}
+.wheel-item.on { color: var(--ink); font-weight: 700; font-size: 19px; }
+.wheel-hl {
+  position: absolute; left: 0; right: 0; top: 80px; height: 40px;
+  border-top: 1.5px solid var(--ink); border-bottom: 1.5px solid var(--ink);
+  pointer-events: none;
+}
+.wheel-fade {
+  position: absolute; left: 0; right: 0; height: 70px; pointer-events: none;
+}
+.wheel-fade.top { top: 0; background: linear-gradient(var(--bg), transparent); }
+.wheel-fade.bottom { bottom: 0; background: linear-gradient(transparent, var(--bg)); }

@@ -1,11 +1,11 @@
-import { useMemo, useRef, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { CalendarDays, List, Plus, ChevronDown } from 'lucide-react'
 import { useSession } from '../hooks/useSession'
 import { useTransactions, useRules, useCategoryMeta } from '../hooks/useData'
 import { addRule } from '../data/rules'
 import { sumIncome, sumExpense } from '../data/transactions'
 import { todayStr, monthKey, thisMonthKey, shiftMonth, monthLabel, fmtMoney, dateLabel, weekdayLabel } from '../data/format'
-import CalendarView from '../components/CalendarView'
+import MonthCarousel from '../components/MonthCarousel'
 import MonthPicker from '../components/MonthPicker'
 import AddSheet from '../components/AddSheet'
 import TxList from '../components/TxList'
@@ -25,21 +25,21 @@ export default function HomePage() {
   const [picking, setPicking] = useState(false)
   const [toast, setToast] = useState('')
   const [rulePrompt, setRulePrompt] = useState(null)
-  const touchRef = useRef(null)
 
   const monthTxs = useMemo(
     () => (txs || []).filter((t) => monthKey(t.date) === month), [txs, month])
 
-  // 月曆每日統計:支出總額 + 是否有其他類型(收入/借貸 → 色點)
+  // 月曆每日統計:支出總額 + 是否有其他類型(收入/借貸 → 色點)。
+  // 一次算全部日期,輪播的前後月份直接共用,不用重算。
   const dayStats = useMemo(() => {
     const map = {}
-    for (const t of monthTxs) {
+    for (const t of txs || []) {
       const s = map[t.date] || (map[t.date] = { expense: 0, other: false })
       if (t.type === 'expense') s.expense += t.amount
       else s.other = true
     }
     return map
-  }, [monthTxs])
+  }, [txs])
 
   const dayTxs = useMemo(
     () => monthTxs.filter((t) => t.date === selectedDay), [monthTxs, selectedDay])
@@ -51,19 +51,6 @@ export default function HomePage() {
 
   function changeMonth(delta) {
     applyMonth(shiftMonth(month, delta))
-  }
-
-  // 日曆左右滑動換月:往右滑=上一月,往左滑=下一月
-  function onTouchStart(e) {
-    touchRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY }
-  }
-  function onTouchEnd(e) {
-    const t = touchRef.current
-    touchRef.current = null
-    if (!t) return
-    const dx = e.changedTouches[0].clientX - t.x
-    const dy = e.changedTouches[0].clientY - t.y
-    if (Math.abs(dx) > 50 && Math.abs(dy) < 60) changeMonth(dx > 0 ? -1 : 1)
   }
 
   function handleSaved({ toast: t, rulePrompt: rp }) {
@@ -115,10 +102,9 @@ export default function HomePage() {
         <div className="empty">載入中…</div>
       ) : view === 'calendar' ? (
         <>
-          <div onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
-            <CalendarView monthKey={month} dayStats={dayStats}
-              selected={selectedDay} onSelect={setSelectedDay} />
-          </div>
+          <MonthCarousel month={month} dayStats={dayStats}
+            selected={selectedDay} onSelect={setSelectedDay}
+            onMonthChange={changeMonth} />
           <div className="tx-date-head">
             {dateLabel(selectedDay)}
             <span className="wd">週{weekdayLabel(selectedDay)}</span>
